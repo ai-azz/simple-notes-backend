@@ -1,0 +1,1 @@
+console.log("Starting make a RESTful API with hapi");
