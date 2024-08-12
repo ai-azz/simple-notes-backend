@@ -42,4 +42,12 @@ const addNoteHandler = (request, h) => {
     return response;
 };
 
-module.exports = {addNoteHandler};
+// define the handler func logic for retrieving all notes
+const getAllNotesHandler = () => ({
+    status: 'success',  // indicate a successful operation
+    data: {
+        notes,  // return the entire notes array in the response
+    },
+});
+
+module.exports = {addNoteHandler, getAllNotesHandler};
