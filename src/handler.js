@@ -50,4 +50,29 @@ const getAllNotesHandler = () => ({
     },
 });
 
-module.exports = {addNoteHandler, getAllNotesHandler};
+// define the handler func logic for retrieving a spesific note by its id
+const getNoteByIdHandler = (request, h) => {
+    const {id} = request.params;  // extract the note id from the request parameters
+
+    const note = notes.filter((n) => n.id === id)[0];  // find the note with the matching id
+    
+    // check if a note with the given id exists
+    if(note !== undefined) {
+        return {
+            status: 'success',  // indicate a successful operation
+            data: {
+                note,  // return the found note in the response
+            },
+        };
+    }
+
+    // if no note was found with the given id, create a failure response
+    const response = h.response({
+        status: 'fail',
+        message: 'Catatan tidak ditemukan',
+    });
+    response.code(404);  // set the http status code to 404 (Not Found)
+    return response;  // return the failure response
+}
+
+module.exports = {addNoteHandler, getAllNotesHandler, getNoteByIdHandler};
