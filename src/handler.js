@@ -3,7 +3,7 @@ const notes = require("./notes");  // import the notes array from notes.js
 
 // define the handler func logic for saving / adding a note
 const addNoteHandler = (request, h) => {
-    const {title, tags, body} = request.playload;  // extract title, tags, and body from the request body (playload)
+    const {title, tags, body} = request.payload;  // extract title, tags, and body from the request body (playload)
     
     const id = nanoid(16);  // generate a unique id for the new note
     const createdAt = new Date().toISOString();
@@ -75,4 +75,46 @@ const getNoteByIdHandler = (request, h) => {
     return response;  // return the failure response
 }
 
-module.exports = {addNoteHandler, getAllNotesHandler, getNoteByIdHandler};
+// define the handler func logic for editing a note by its id
+const editNoteByIdHandler = (request, h) => {
+    const {id} = request.params;  // extract the note id from the request parameters
+
+    const {title, tags, body} = request.payload;  // extract title, tags, and body from the request body (payload)
+    const updatedAt = new Date().toISOString();  // get the current timestamp for the update
+
+    // find the index of the note with the matching id in the notes array (indexing array)
+    const index = notes.findIndex((note) => note.id === id);
+
+    // if the note exists in the array, update its contents
+    if(index !== -1) {
+        notes[index] = {
+            ...notes[index],  // preserve the exiting note data
+            title,  // update the title, tags, body, and the updateAt timestamp
+            tags,
+            body,
+            updatedAt,
+        };
+
+        const response = h.response({  // create a success respond to indicate the note was updated
+            status: 'success',
+            message: 'Catatan berhasil diperbarui',
+        });
+        response.code(200);
+        return response;
+    }
+
+    // if the note id is not found, create failure response
+    const response = h.response({
+        status: 'fail',
+        message: 'Gagal memperbarui catatan. Id tidak ditemukan',
+    });
+    response.code(404);  // set the http status code to 404 (Not Found) to ta failure response
+    return response;
+};
+
+module.exports = {
+    addNoteHandler, 
+    getAllNotesHandler, 
+    getNoteByIdHandler,
+    editNoteByIdHandler,
+};
