@@ -112,9 +112,36 @@ const editNoteByIdHandler = (request, h) => {
     return response;
 };
 
+// handler for deleteing a note by its id
+const deleteNoteByIdHandler = (request, h) => {
+    const {id} = request.params;  // extract the note id from the request param
+
+    // find the index of the note with the matching id
+    const index = notes.findIndex((note) => note.id === id);
+
+    if(index !== -1) {
+        notes.splice(index, 1);  // remove the note from the notes array
+        const response = h.response({
+            status: 'success',  // indicate successful deletion
+            message: 'Catatan berhasil dihapus',
+        });
+        response.code(200);
+        return response;
+    }
+
+    // if the note id is not found, create a failure response
+    const response = h.response({
+        status: 'fail',
+        message: 'Catatan gagal dihapus. Id tidak ditemukan',
+    });
+    response.code(404);  // set the http status code 404 not found for the failure response
+    return response;
+};
+
 module.exports = {
     addNoteHandler, 
     getAllNotesHandler, 
     getNoteByIdHandler,
     editNoteByIdHandler,
+    deleteNoteByIdHandler,
 };
